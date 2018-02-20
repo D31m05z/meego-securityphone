@@ -1,0 +1,17 @@
+#!/bin/sh
+chmod 667 /usr/share/applications/SecurityPhone_harmattan.desktop
+chmod 777 -R /etc/mce/
+
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Sound true
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Vibration true
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/StandBy true
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Anonym false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/EMailNotification false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=string /apps/ControlPanel/SecurityPhone/EMail ""
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/GPS false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Camera false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/ExitActivator false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=string /apps/ControlPanel/SecurityPhone/NumberPassword ""
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/PasswordType false
+
+exit 0
