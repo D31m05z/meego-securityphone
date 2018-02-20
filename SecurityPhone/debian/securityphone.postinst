@@ -1,0 +1,13 @@
+#!/bin/sh
+chmod 667 /usr/share/applications/SecurityService.desktop
+
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Sound true
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Vibration false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/StandBy false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/Anonym false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=bool /apps/ControlPanel/SecurityPhone/EMailNotification false
+/usr/bin/aegis-exec -s -u user /usr/bin/gconftool -s --type=string /apps/ControlPanel/SecurityPhone/EMail ""
+
+
+
+exit 0

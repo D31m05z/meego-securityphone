@@ -1,0 +1,5 @@
+[Desktop Entry]
+Type=Application
+Name=Security
+Exec=/bin/sh /opt/SecurityPhone/base/service.sh
+Icon=/opt/SecurityPhone/base/off.png
