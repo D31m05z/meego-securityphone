@@ -29,7 +29,6 @@
 #include <QObject>
 #include <QOrientationSensor>
 
-
 #include <QObject>
 #include <QApplication>
 #include <QFeedbackHapticsEffect>

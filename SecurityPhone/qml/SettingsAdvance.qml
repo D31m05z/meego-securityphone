@@ -119,8 +119,8 @@ Page {
             id: switchVibration
             checked: vibration;
             onCheckedChanged: {
-                if(switchVibration.checked){
-                    if(switchAnonym.checked){
+                if(switchVibration.checked) {
+                    if(switchAnonym.checked) {
                         mySecurity.showBanner("Warning! Anonym  alarm is deactivating...");
                         switchAnonym.checked = false;
                         mySecurity.switchAnonym(false);
@@ -153,7 +153,7 @@ Page {
             id: switchAnonym
             checked: anonym;
             onCheckedChanged: {
-                if(switchAnonym.checked){
+                if(switchAnonym.checked) {
                     mySecurity.showBanner("Warning! Sound and Vibration disabled. Anonym alarm is activating...");
                     switchSound.checked = false;
                     switchVibration.checked = false;

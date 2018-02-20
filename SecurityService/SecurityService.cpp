@@ -122,7 +122,6 @@ void SecurityService::deactivating()
         system("gconftool-2 -t string -s /desktop/meego/screen_lock/low_power_mode/operator_logo /opt/SecurityPhone/base/standby-nothing.png");
     }
 
-
     qDebug() << "power button overwrite - restore default settings" << endl;
     QProcess *proc = new QProcess();
     proc->start("sh /opt/SecurityPhone/base/deactivation.sh");
@@ -176,8 +175,7 @@ void SecurityService::onChangeOrientationChange(int state)
                 if(cVibration)
                     vibrate(300,0.6f);
 
-                if(requires == readIndex)
-                {
+                if(requires == readIndex) {
                     qDebug() << "PASSED" << endl;
                     pass = true;
                     deactivating();
@@ -276,7 +274,6 @@ void SecurityService::ALARM()
 
 void SecurityService::readCurrentPassword()
 {
-
     qDebug()<< "readCurrPass" << endl;
 
     QFile file("/home/user/securityPhone.txt");

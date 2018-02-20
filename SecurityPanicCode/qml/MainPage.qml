@@ -65,7 +65,6 @@ Page {
             anchors.top: parent.top
             anchors.topMargin: 110
 
-
             Button {
                 text: "OK"; onClicked: {
                     wrongPassword.accept()
@@ -73,7 +72,6 @@ Page {
             }
         }
     }
-
 
     Dialog {
         id: changedPassword
@@ -107,7 +105,6 @@ Page {
             anchors.top: parent.top
             anchors.topMargin: 110
 
-
             Button {
                 text: "OK"; onClicked: {
                     changedPassword.accept()
@@ -116,7 +113,6 @@ Page {
         }
     }
 
-
     Dialog {
         id: oldPassword
         title: Rectangle {
@@ -124,7 +120,6 @@ Page {
             height: 2
             width: parent.width
             color: "red"
-
         }
 
         content:Item {
@@ -140,7 +135,7 @@ Page {
                 color: "white"
                 width: parent.width
                 wrapMode: Text.WordWrap
-                text: "Warning! You chosed the orientation unlock mode! You can't unlock the number password!"
+                text: "You need to unlock the device with orientation password."
             }
         }
 
@@ -149,7 +144,6 @@ Page {
             anchors.top: parent.top
             anchors.topMargin: 110
 
-
             Button {
                 text: "OK"; onClicked: {
                     oldPassword.accept()
@@ -157,8 +151,6 @@ Page {
             }
         }
     }
-
-
 
     Dialog {
         id: rename_dialog
@@ -175,7 +167,7 @@ Page {
                 anchors.verticalCenter: titleField2.verticalCenter
                 font.capitalization: Font.MixedCase
                 color: "white"
-                text: "Need your password!"
+                text: "Enter your password."
             }
 
             Image {
@@ -198,7 +190,7 @@ Page {
                 y: 15
                 width:400
 
-                placeholderText: "type your password"
+                placeholderText: "Enter your password"
                 platformStyle: TextFieldStyle { paddingRight: clearButton.width }
 
                 echoMode: TextInput.Password
@@ -289,7 +281,7 @@ Page {
 
             Button {
                 x:50
-                text: qsTr("turn off")
+                text: qsTr("Unlock")
                 onClicked: {
                     if(type)
                         rename_dialog.open();
@@ -302,7 +294,7 @@ Page {
                 font.pixelSize: 50
                 width: 400
                 wrapMode: Text.WordWrap
-                text: qsTr("Click the button if you turn off the security system. You need the password for turn off the service!")
+                text: qsTr("Need to enter your password for deactivating the security phone service.")
             }
         }
     }

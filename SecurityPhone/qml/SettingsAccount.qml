@@ -160,9 +160,6 @@ Page {
                 onClicked:{
                     itemEditorQ.reject();
 
-
-
-
                     dialogColor = "red";
                     message =  "If you could not enter the password correctly for the first time, the device will allow you to retry after a few seconds of vibrating continuously.";
                     dialog.open();
@@ -328,7 +325,6 @@ Page {
             text: "Set up your password";
         }
 
-
         SipAttributes {
             id:customSipAttributes
             actionKeyEnabled: true
@@ -363,22 +359,21 @@ Page {
                 //      pass1 = numberPasswordText1.text;
                 //  }
 
-                if(numberPassword == ""){
+                if(numberPassword == "") {
                     havePassword = false;
 
-                    if(pressOK){
+                    if(pressOK) {
                         pass1 = numberPasswordText1.text;
-                    }
-                    else {
+                    } else {
                         pass1 = numberPasswordText1.text;
                         numberPassword = "";
                     }
-                }else {
+                } else {
                     havePassword = true;
                     console.log("old password need");
 
-                    if(pressOK){
-                        if(numberPassword == numberPasswordText1.text){
+                    if(pressOK) {
+                        if(numberPassword == numberPasswordText1.text) {
                             console.log("old password entered");
 
                             numberPasswordText1.text = "";
@@ -394,13 +389,12 @@ Page {
                             dialog.open();
                         }
                     }
-
                 }
                 pressOK = false;
             }
         }
 
-        TextField{
+        TextField {
             id:numberPasswordText2
             visible: true
             x: 40
@@ -439,7 +433,6 @@ Page {
                             message = "Password changed!";
                             dialog.open();
                         } else {
-
                             dialogColor = "red";
                             message = "Wrong password!"
                             dialog.open();

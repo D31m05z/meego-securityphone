@@ -35,7 +35,6 @@
 #include <MComponentData>
 #include <MNotification>
 
-
 class Panic : public QObject
 {
     Q_OBJECT
