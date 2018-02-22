@@ -93,6 +93,7 @@ private:
     int codeNumber;
     QMediaPlayer* player;
     QMediaPlaylist* playlist;
+    QFeedbackHapticsEffect* rumble;
 
     bool cSound;
     bool cVibration;

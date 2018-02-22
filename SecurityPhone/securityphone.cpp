@@ -43,16 +43,25 @@ SecurityPhone::SecurityPhone()
     player = new QMediaPlayer;
     player->setPlaylist(playlist);
     player->setVolume(50);
+
+    rumble = new QFeedbackHapticsEffect();
+    rumble->setAttackIntensity(0.0);
+    rumble->setAttackTime(100);
+    rumble->setIntensity(0.6);
+    rumble->setDuration(300);
+    rumble->setFadeTime(100);
+    rumble->setFadeIntensity(0.+0);
 }
 
 SecurityPhone::~SecurityPhone()
 {
     qDebug() << "DTOR SecurityPhone" << endl;
     delete orientation;
-
     delete passFile;
     delete player;
     delete playlist;
+    delete rumble;
+    qDebug() << "DTOR SecurityPhone finished" << endl;
 }
 
 void SecurityPhone::inicialize(QObject* parent)
@@ -61,7 +70,7 @@ void SecurityPhone::inicialize(QObject* parent)
     root = parent;
     orientation = new Orientation(parent);
 
-    connect(orientation,SIGNAL(orientationChanged(int)),SLOT(onChangeOrientationChange(int)));
+    connect(orientation, SIGNAL(orientationChanged(int)), SLOT(onChangeOrientationChange(int)));
 
     password = "start: FACE UP\n";
     root->setProperty("password",password);
@@ -78,38 +87,38 @@ void SecurityPhone::inicialize(QObject* parent)
 
 void SecurityPhone::loadConfiguration()
 {
-    GConfItem*  config = new GConfItem("/apps/ControlPanel/SecurityPhone/Sound");
-    cSound = config->value().toInt();
+    GConfItem config_sound("/apps/ControlPanel/SecurityPhone/Sound");
+    cSound = config_sound.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/Vibration");
-    cVibration = config->value().toInt();
+    GConfItem config_vibration("/apps/ControlPanel/SecurityPhone/Vibration");
+    cVibration = config_vibration.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/StandBy");
-    cStandBy = config->value().toInt();
+    GConfItem config_standby("/apps/ControlPanel/SecurityPhone/StandBy");
+    cStandBy = config_standby.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/Anonym");
-    cAnonym = config->value().toInt();
+    GConfItem config_anonym("/apps/ControlPanel/SecurityPhone/Anonym");
+    cAnonym = config_anonym.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/EMailNotification");
-    cMail = config->value().toInt();
+    GConfItem config_mail("/apps/ControlPanel/SecurityPhone/EMailNotification");
+    cMail = config_mail.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/EMail");
-    cMailAddress = config->value().toString();
+    GConfItem config_mail_address("/apps/ControlPanel/SecurityPhone/EMail");
+    cMailAddress = config_mail_address.value().toString();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/GPS");
-    cGPS = config->value().toInt();
+    GConfItem config_gps("/apps/ControlPanel/SecurityPhone/GPS");
+    cGPS = config_gps.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/Camera");
-    cCamera = config->value().toInt();
+    GConfItem config_camera("/apps/ControlPanel/SecurityPhone/Camera");
+    cCamera = config_camera.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/ExitActivator");
-    cExitActivator = config->value().toInt();
+    GConfItem config_exit_activator("/apps/ControlPanel/SecurityPhone/ExitActivator");
+    cExitActivator = config_exit_activator.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/NumberPassword");
-    numberPassword = config->value().toString();
+    GConfItem config_number_pwd("/apps/ControlPanel/SecurityPhone/NumberPassword");
+    numberPassword = config_number_pwd.value().toString();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/PasswordType");
-    cPasswordType = config->value().toInt();
+    GConfItem config_pwd_type("/apps/ControlPanel/SecurityPhone/PasswordType");
+    cPasswordType = config_pwd_type.value().toInt();
 
     root->setProperty("sound",cSound);
     root->setProperty("vibration",cVibration);
@@ -120,23 +129,13 @@ void SecurityPhone::loadConfiguration()
     root->setProperty("gps",cGPS);
     root->setProperty("camera",cCamera);
     root->setProperty("exitActivator",cExitActivator);
-
     root->setProperty("numberPassword",numberPassword);
     qDebug() << "PASSWORD:" << numberPassword.toStdString()<<endl;
-
     root->setProperty("useTypeUnlock",cPasswordType);
 }
 
 void SecurityPhone::vibrate()
 {
-    QFeedbackHapticsEffect* rumble = new QFeedbackHapticsEffect();
-    rumble->setAttackIntensity(0.0);
-    rumble->setAttackTime(100);
-    rumble->setIntensity(0.6);
-    rumble->setDuration(300);
-    rumble->setFadeTime(100);
-    rumble->setFadeIntensity(0.+0);
-
     rumble->start();
 }
 
@@ -169,7 +168,6 @@ void SecurityPhone::startPasswordRecord()
     password = "start: FACE UP\n";
     root->setProperty("password",password);
     codeNumber = 0;
-
 }
 
 void SecurityPhone::stopPasswordRecord()
@@ -358,7 +356,7 @@ void SecurityPhone::startService(bool timer)
         notification.publish();
 
     } else {
-        root->setProperty("countDown",3);
+        root->setProperty("countDown", 3);
         MNotification notification(MNotification::DeviceEvent, "", QObject::tr("Security system activating..."));
         notification.setImage("icon-m-user-guide");
         notification.publish();

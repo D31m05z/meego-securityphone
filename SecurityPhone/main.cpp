@@ -46,16 +46,16 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //-----------------------------------------*/
 
     qDebug() << "$security" << endl;
-    SecurityPhone* security = new SecurityPhone();
+    SecurityPhone security;
 
     qDebug() << "$viewer" << endl;
     QDeclarativeView viewer;
-    viewer.rootContext()->setContextProperty("mySecurity", security);
+    viewer.rootContext()->setContextProperty("mySecurity", &security);
     viewer.setSource(QUrl("qrc:/qml/main.qml"));
     viewer.showFullScreen();
 
     qDebug() << "$inicialize" << endl;
-    security->inicialize(dynamic_cast<QObject*>(viewer.rootObject()));
+    security.inicialize(dynamic_cast<QObject*>(viewer.rootObject()));
 
     qDebug() << "$pSplash close" << endl;
     pSplash->close();
