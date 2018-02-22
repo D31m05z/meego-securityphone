@@ -39,19 +39,17 @@ void Panic::init(QObject *parent)
 {
     root = parent;
 
-    GConfItem* config = new GConfItem("/apps/ControlPanel/SecurityPhone/NumberPassword");
-    password = config->value().toString();
-
-    root->setProperty("password",password);
+    GConfItem config_password("/apps/ControlPanel/SecurityPhone/NumberPassword");
+    password = config_password.value().toString();
+    root->setProperty("password", password);
     qDebug() << password << endl;
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/StandBy");
-    cStandBy = config->value().toInt();
+    GConfItem config_standby("/apps/ControlPanel/SecurityPhone/StandBy");
+    cStandBy = config_standby.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/PasswordType");
-    cPasswordType = config->value().toInt();
-
-    root->setProperty("type",cPasswordType);
+    GConfItem config_password_type("/apps/ControlPanel/SecurityPhone/PasswordType");
+    cPasswordType = config_password_type.value().toInt();
+    root->setProperty("type", cPasswordType);
 }
 
 //invoke
@@ -75,8 +73,8 @@ void Panic::killService()
     }
 
     qDebug() << "power button overwrite - restore default settings" << endl;
-    QProcess *proc = new QProcess();
-    proc->start("sh /opt/SecurityPhone/base/panic.sh");
+    QProcess process;
+    process.start("sh /opt/SecurityPhone/base/panic.sh");
 
     exit(0);
 }

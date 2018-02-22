@@ -44,18 +44,17 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //-----------------------------------------*/
 
     qDebug() << "$security" << endl;
-    Panic* panic = new Panic();
+    Panic panic;
 
     qDebug() << "$viewer" << endl;
-    //QmlApplicationViewer
     QDeclarativeView viewer;
-    viewer.rootContext()->setContextProperty("myPanic", panic);
+    viewer.rootContext()->setContextProperty("myPanic", &panic);
 
     viewer.setSource(QUrl("qrc:/qml/main.qml"));
     viewer.showFullScreen();
 
     qDebug() << "$inicialize" << endl;
-    panic->init(dynamic_cast<QObject*>(viewer.rootObject()));
+    panic.init(dynamic_cast<QObject*>(viewer.rootObject()));
 
     qDebug() << "$pSplash close" << endl;
     pSplash->close();
