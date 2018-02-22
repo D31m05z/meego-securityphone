@@ -39,7 +39,6 @@ using namespace QtMobility;
 class Orientation : public QObject
 {
     Q_OBJECT
-    //Q_PROPERTY(QString state READ state NOTIFY orientationChanged)
 
 public:
     Orientation(QObject *parent = 0);
@@ -56,7 +55,7 @@ private slots:
 
 private:
     QOrientationSensor* m_sensor;
-    QFeedbackHapticsEffect *rumble;
+    QFeedbackHapticsEffect* m_rumble;
 };
 
 #endif // ORIENTATION_H

@@ -42,7 +42,7 @@ SecurityService::SecurityService(QObject *parent)
     : QObject(parent)
 {
     readIndex = 0;
-    requires= 0;
+    requires = 0;
     fail = false;
     pass = false;
     alarming = false;
@@ -51,7 +51,7 @@ SecurityService::SecurityService(QObject *parent)
     readCurrentPassword();
 
     orientation = new Orientation(parent);
-    connect(orientation,SIGNAL(orientationChanged(int)),SLOT(onChangeOrientationChange(int)));
+    connect(orientation, SIGNAL(orientationChanged(int)), SLOT(onChangeOrientationChange(int)));
 
     playlist = new QMediaPlaylist();
     playlist->addMedia(QUrl::fromLocalFile("/opt/SecurityPhone/base/alarm.wav"));
@@ -66,19 +66,26 @@ SecurityService::SecurityService(QObject *parent)
 
     player->setVolume(100);
 
-    if(cAnonym || !cSound)
+    if(cAnonym || !cSound) {
         player->setMuted(true);
+    }
 
-    connect(player,SIGNAL(stateChanged(QMediaPlayer::State)),SLOT(onStateChanged(QMediaPlayer::State)));
+    rumble = new QFeedbackHapticsEffect();
+    rumble->setAttackIntensity(0.0);
+    rumble->setAttackTime(100);
+    rumble->setFadeTime(100);
+    rumble->setFadeIntensity(0.+0);
+
+    connect(player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State)));
 
     volResourceSet = new ResourcePolicy::ResourceSet("player", this);
     volResourceSet->addResourceObject(new ResourcePolicy::ScaleButtonResource);
     volResourceSet->acquire();
-    // volResourceSet->release();
 
     qDebug() << "power button overwrite" << endl;
-    QProcess *proc = new QProcess();
-    proc->start("sh /opt/SecurityPhone/base/activation.sh");
+
+    QProcess process;
+    process.start("sh /opt/SecurityPhone/base/activation.sh");
 
     PowerButtonListener* listener = new PowerButtonListener(this);
     //  PowerMenu powerMenu(window);
@@ -97,13 +104,13 @@ SecurityService::~SecurityService()
     delete orientation;
     delete player;
     delete playlist;
+    delete volResourceSet;
+    delete rumble;
 }
 
 void SecurityService::powerBtnDoubleClick()
 {
-    qDebug() << "powerBtn click" << endl;
-    printf("fgdfgdfgdgdfg\n");
-
+    qDebug() << "powerBtn double click" << endl;
 }
 
 void SecurityService::deactivating()
@@ -123,31 +130,21 @@ void SecurityService::deactivating()
     }
 
     qDebug() << "power button overwrite - restore default settings" << endl;
-    QProcess *proc = new QProcess();
-    proc->start("sh /opt/SecurityPhone/base/deactivation.sh");
+    QProcess process;
+    process.start("sh /opt/SecurityPhone/base/deactivation.sh");
 
-    exit(0);
+    QApplication::exit();
 }
 
 void SecurityService::onStateChanged(QMediaPlayer::State state)
 {
     qDebug() << "onStateChanged: " <<state;
-    /*
-    if(pass && state == QMediaPlayer::StoppedState){
-        deactivating();
-    }*/
 }
 
 void SecurityService::vibrate(int duration, qreal intensity)
 {
-    QFeedbackHapticsEffect* rumble = new QFeedbackHapticsEffect();
-    rumble->setAttackIntensity(0.0);
-    rumble->setAttackTime(100);
     rumble->setIntensity(intensity);
     rumble->setDuration(duration);
-    rumble->setFadeTime(100);
-    rumble->setFadeIntensity(0.+0);
-
     rumble->start();
 }
 
@@ -164,16 +161,9 @@ void SecurityService::onChangeOrientationChange(int state)
             if( state == password[readIndex++]) {
                 qDebug() << "CORRECT" << endl;
 
-                /*
-                if(cSound){
-                    playlist->setCurrentIndex(1);
-                    playlist->setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
-
-                    player->play();
-                }*/
-
-                if(cVibration)
-                    vibrate(300,0.6f);
+                if(cVibration) {
+                    vibrate(300, 0.6f);
+                }
 
                 if(requires == readIndex) {
                     qDebug() << "PASSED" << endl;
@@ -185,11 +175,6 @@ void SecurityService::onChangeOrientationChange(int state)
                 qDebug() << "AND START ENTER YOUR PASSWORD AGAIN!!!" << endl;
                 readIndex = 0;
                 vibrate(3000,1.0f);
-                /*  sleep(1);
-               vibrate(200,0.6f);
-               sleep(1);
-               vibrate(200,0.8f);
-               sleep(1);*/
             }
         } else {
             if(state == password[readIndex++]) {
@@ -201,8 +186,9 @@ void SecurityService::onChangeOrientationChange(int state)
                     player->play();
                 }
 
-                if(cVibration)
-                    vibrate(300,0.6f);
+                if(cVibration) {
+                    vibrate(300, 0.6f);
+                }
 
                 if(requires == readIndex) {
                     qDebug() << "PASSED" << endl;
@@ -232,15 +218,15 @@ void SecurityService::ALARM()
         qDebug() << "WRONG PASSWORD!! ALARM IS STARTING..." << endl;
 
         if(cMail) {
-            #ifdef HAS_MAIL_SERVICE
+#ifdef HAS_MAIL_SERVICE
             if(cMailAddress !="") {
                 qDebug() << "sending mail" << endl;
                 if(!sendMail(cMailAddress))
                     qDebug() << "mail sending failed!!" << endl;
             }
-            #else
-                qDebug() << "mail service is not supported" << endl;
-            #endif
+#else
+            qDebug() << "mail service is not supported" << endl;
+#endif
         }
 
         if(cSound) {
@@ -252,19 +238,19 @@ void SecurityService::ALARM()
         }
 
         qDebug() << "ALARM VOLUME TIGGER TIMER STARTING" << endl;
-        //------------------------timer-----------
-        QTimer *timer = new QTimer(this);
+
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        QTimer* timer = new QTimer(this);
         timer->setInterval(1000);
         connect(timer, SIGNAL(timeout()), this, SLOT(volumeMaximized()));
         timer->start();
-        //----------------------------------------
 
         if(cStandBy) {
             qDebug() << "show on standby" << endl;
             system("gconftool-2 -t string -s /desktop/meego/screen_lock/low_power_mode/operator_logo /opt/SecurityPhone/base/standby-warning.png");
         }
 
-        readIndex =0;
+        readIndex = 0;
         fail = true;
 
         qDebug() << "SO YOU ARE LOOSE $$$$" << endl;
@@ -274,7 +260,7 @@ void SecurityService::ALARM()
 
 void SecurityService::readCurrentPassword()
 {
-    qDebug()<< "readCurrPass" << endl;
+    qDebug() << "readCurrPass" << endl;
 
     QFile file("/home/user/securityPhone.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -315,42 +301,44 @@ void SecurityService::readCurrentPassword()
         system("cat /opt/SecurityPhone/base/settings.desktop >/usr/share/applications/SecurityPhone_harmattan.desktop");
 
         qDebug() << "power button overwrite - restore default settings" << endl;
-        QProcess *proc = new QProcess();
-        proc->start("sh /opt/SecurityPhone/base/deactivation.sh");
+        QProcess process;
+        process.start("sh /opt/SecurityPhone/base/deactivation.sh");
 
-        exit(0);
+        QApplication::exit();
     }
 }
 
 void SecurityService::loadConfiguration()
 {
-    GConfItem*  config = new GConfItem("/apps/ControlPanel/SecurityPhone/Sound");
-    cSound = config->value().toInt();
+    GConfItem config_sound("/apps/ControlPanel/SecurityPhone/Sound");
+    cSound = config_sound.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/Vibration");
-    cVibration = config->value().toInt();
+    GConfItem config_vibration("/apps/ControlPanel/SecurityPhone/Vibration");
+    cVibration = config_vibration.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/StandBy");
-    cStandBy = config->value().toInt();
+    GConfItem config_standby("/apps/ControlPanel/SecurityPhone/StandBy");
+    cStandBy = config_standby.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/Anonym");
-    cAnonym = config->value().toInt();
+    GConfItem config_anonym("/apps/ControlPanel/SecurityPhone/Anonym");
+    cAnonym = config_anonym.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/EMailNotification");
-    cMail = config->value().toInt();
+    GConfItem config_mail("/apps/ControlPanel/SecurityPhone/EMailNotification");
+    cMail = config_mail.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/EMail");
-    cMailAddress = config->value().toString();
+    GConfItem config_mail_address("/apps/ControlPanel/SecurityPhone/EMail");
+    cMailAddress = config_mail_address.value().toString();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/GPS");
-    cGPS = config->value().toInt();
+    GConfItem config_gps("/apps/ControlPanel/SecurityPhone/GPS");
+    cGPS = config_gps.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/Camera");
-    cCamera = config->value().toInt();
+    GConfItem config_camera("/apps/ControlPanel/SecurityPhone/Camera");
+    cCamera = config_camera.value().toInt();
 
-    config = new GConfItem("/apps/ControlPanel/SecurityPhone/PasswordType");
-    cPasswordType = config->value().toInt();
+    GConfItem config_password("/apps/ControlPanel/SecurityPhone/PasswordType");
+    cPasswordType = config_password.value().toInt();
 }
+
+#if 1
 
 void SecurityService::volumeMaximized()
 {
@@ -378,7 +366,8 @@ bool SecurityService::increaseVolume()
 
     QDBusInterface dbus_iface(DBUS_MAFW_SERVICE, DBUS_MAFW_PATH, DBUS_MAFW_INTERFACE);
     //  get current volume
-    /* QDBusMessage reply = dbus_iface.call(DBUS_MAFW_GETPROPERTY, "volume");
+    /*
+    QDBusMessage reply = dbus_iface.call(DBUS_MAFW_GETPROPERTY, "volume");
     if(reply.type() == QDBusMessage::ErrorMessage)
         return false;
 
@@ -387,18 +376,21 @@ bool SecurityService::increaseVolume()
     uint newvolume = volume + 4;
     if(newvolume > 100)
         newvolume = 100;
-*/
+    */
+
     QDBusReply<bool> r = dbus_iface.call(DBUS_MAFW_SETPROPERTY, "volume", QVariant::fromValue(QDBusVariant(100)));
     return r.value();
 }
 
-/*
-void SecurityService::volumeMaximized(){
+#else
+
+void SecurityService::volumeMaximized()
+{
     qDebug() << "volume maximized optimalization started, because the trigger send the signal" << endl;
 
-    if(playbackState()){
+    if(playbackState()) {
         QDBusInterface dbus_iface(DBUS_MAFW_SERVICE, DBUS_MAFW_PATH, DBUS_MAFW_INTERFACE);
-       //  get current volume
+        //  get current volume
         QDBusMessage reply = dbus_iface.call(DBUS_MAFW_GETPROPERTY, "volume");
         if(reply.type() != QDBusMessage::ErrorMessage){
             QDBusVariant v = reply.arguments().at(1).value<QDBusVariant>();
@@ -419,8 +411,9 @@ void SecurityService::volumeMaximized(){
     }
 }
 
-bool SecurityService::playbackState() {
-     qDebug() << "playbackState" << endl;
+bool SecurityService::playbackState()
+{
+    qDebug() << "playbackState" << endl;
     QDBusInterface dbus_iface(DBUS_MUSIC_SERVICE, DBUS_MUSIC_PATH, DBUS_MUSIC_INTERFACE);
     QDBusReply<int> reply = dbus_iface.call(DBUS_PBSTATE);
     if (reply.isValid())
@@ -430,14 +423,14 @@ bool SecurityService::playbackState() {
     return false;
 }
 
-bool SecurityService::increaseVolume() {
+bool SecurityService::increaseVolume()
+{
     QDBusInterface dbus_iface(DBUS_MAFW_SERVICE, DBUS_MAFW_PATH, DBUS_MAFW_INTERFACE);
     QDBusReply<bool> r = dbus_iface.call(DBUS_MAFW_SETPROPERTY, "volume", QVariant::fromValue(QDBusVariant(100)));
     return r.value();
 }
-*/
 
-/*
+
 #define BUTTON_POWER_UDI  "/org/freedesktop/Hal/devices/computer_logicaldev_input"
 
 static void condition_cb(LibHalContext *ctx, const char *udi, const char *name, const char *detail);
@@ -474,8 +467,8 @@ int powerButton()
 
     dbus_error_init(&err);
     if (!libhal_ctx_init(ctx, &err)) {
-       g_print("Hal init error %s \n", err.message);
-       return -1;
+        g_print("Hal init error %s \n", err.message);
+        return -1;
     }
 
     dbus_error_init(&err);
@@ -493,4 +486,5 @@ static void condition_cb(LibHalContext *ctx, const char *udi, const char *name, 
     g_print("udi is %s, name is %s, detail is %s\n", udi, name, detail);
     if (!strcmp(name, "ButtonPressed") && !strcmp(detail, "power"))
         g_print("power button pressed\n");
-}*/
+}
+#endif

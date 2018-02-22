@@ -46,21 +46,6 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusConnectionInterface>
 
-//#include <unistd.h>
-//#define DBUS_API_SUBJECT_TO_CHANGE
-//#include <osso-ic.h>
-/*
-#include <hal/libhal.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <glib.h>
-#include <glib-object.h>
-#include <dbus/dbus.h>
-#include <dbus/dbus-glib-lowlevel.h>
-
-*/
 #include "orientation.h"
 #ifdef HAS_MAIL_SERVICE
 #include "mailService/SmtpMime"
@@ -97,7 +82,6 @@ public:
     void ALARM();
 
 public slots:
-
     void onChangeOrientationChange(int state);
     void onStateChanged(QMediaPlayer::State state);
     void volumeMaximized();
@@ -107,16 +91,13 @@ private:
     Orientation* orientation;
     QMediaPlayer* player;
     QMediaPlaylist* playlist;
+    QFeedbackHapticsEffect* rumble;
     int password[7];
     int readIndex;
     int requires;
     bool fail;
     bool pass;
     bool alarming;
-    // bool login;
-
-    // int failCount;
-
     bool cSound;
     bool cVibration;
     bool cStandBy;

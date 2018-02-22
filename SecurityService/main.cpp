@@ -43,9 +43,7 @@ int main(int argc, char *argv[])
 {
     app = new QApplication(argc, argv);
 
-    //---------------- notify -----------------
     MComponentData::createInstance(argc, argv);
-    //-----------------------------------------*/
 
     signal(SIGTERM, term);
     service = new SecurityService(app);

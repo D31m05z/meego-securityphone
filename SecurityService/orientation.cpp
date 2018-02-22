@@ -40,29 +40,24 @@ Orientation::Orientation(QObject *parent)
     connect(m_sensor, SIGNAL(readingChanged()), SLOT(onReadingChanged()));
     m_sensor->start();
 
-    //qDebug() << "rezeg" <<endl;
-    //vibrate();
+    m_rumble = new QFeedbackHapticsEffect();
+    m_rumble->setAttackIntensity(0.0);
+    m_rumble->setAttackTime(100);
+    m_rumble->setIntensity(0.6);
+    m_rumble->setDuration(300);
+    m_rumble->setFadeTime(100);
+    m_rumble->setFadeIntensity(0.+0);
 }
 
 Orientation::~Orientation()
 {
     delete m_sensor;
-    qDebug() << "rumble elott" << endl;
-    //delete rumble;
-    //qDebug() << "rumble utan" << endl;
+    delete m_rumble;
 }
 
 void Orientation::vibrate()
 {
-    /*rumble = new QFeedbackHapticsEffect();
-    rumble->setAttackIntensity(0.0);
-    rumble->setAttackTime(100);
-    rumble->setIntensity(0.6);
-    rumble->setDuration(300);
-    rumble->setFadeTime(100);
-    rumble->setFadeIntensity(0.+0);
-
-    rumble->start();*/
+    m_rumble->start();
 }
 
 void Orientation::onReadingChanged()
@@ -73,39 +68,31 @@ void Orientation::onReadingChanged()
     case QOrientationReading::TopUp:
         qDebug() << "TopUp" << endl;
         vibrate();
-
         emit orientationChanged(QOrientationReading::TopUp);
         break;
     case QOrientationReading::TopDown:
         qDebug() << "TopDown" << endl;
         vibrate();
-
         emit orientationChanged(QOrientationReading::TopDown);
         break;
     case QOrientationReading::LeftUp:
         qDebug() << "LeftUp" << endl;
         vibrate();
-
         emit orientationChanged(QOrientationReading::LeftUp);
         break;
     case QOrientationReading::RightUp:
         qDebug() << "RightUp" << endl;
         vibrate();
-
         emit orientationChanged(QOrientationReading::RightUp);
         break;
     case QOrientationReading::FaceDown:
         qDebug() << "FaceDown" << endl;
         vibrate();
-
         emit orientationChanged(QOrientationReading::FaceDown);
         break;
     case QOrientationReading::FaceUp:
         qDebug() << "FaceUp" << endl;
         vibrate();
-        // passwordActiv = true;
-        // player->stop();
-
         emit orientationChanged(QOrientationReading::FaceUp);
         break;
     default:
