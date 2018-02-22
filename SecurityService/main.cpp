@@ -48,5 +48,7 @@ int main(int argc, char *argv[])
     signal(SIGTERM, term);
     service = new SecurityService(app);
 
+    QObject::connect(service, SIGNAL(finished()), app, SLOT(quit()));
+
     return app->exec();
 }

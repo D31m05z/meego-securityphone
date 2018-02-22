@@ -33,13 +33,6 @@ Orientation::Orientation(QObject *parent)
 {
     qDebug() << "Sarting sensores" << endl;
 
-    m_sensor = new QOrientationSensor(this);
-    m_sensor->setActive(true);
-    m_sensor->setProperty("alwaysOn",true);
-
-    connect(m_sensor, SIGNAL(readingChanged()), SLOT(onReadingChanged()));
-    m_sensor->start();
-
     m_rumble = new QFeedbackHapticsEffect();
     m_rumble->setAttackIntensity(0.0);
     m_rumble->setAttackTime(100);
@@ -47,6 +40,13 @@ Orientation::Orientation(QObject *parent)
     m_rumble->setDuration(300);
     m_rumble->setFadeTime(100);
     m_rumble->setFadeIntensity(0.+0);
+
+    m_sensor = new QOrientationSensor(this);
+    m_sensor->setActive(true);
+    m_sensor->setProperty("alwaysOn",true);
+    connect(m_sensor, SIGNAL(readingChanged()), SLOT(onReadingChanged()));
+
+    m_sensor->start();
 }
 
 Orientation::~Orientation()

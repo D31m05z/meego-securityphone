@@ -46,6 +46,9 @@ public:
     Q_INVOKABLE void killService();
     void init(QObject* parent);
 
+signals:
+    void finished();
+
 private:
     QObject* root;
     QString password;

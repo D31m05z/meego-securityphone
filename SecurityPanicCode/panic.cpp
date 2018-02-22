@@ -76,5 +76,5 @@ void Panic::killService()
     QProcess process;
     process.start("sh /opt/SecurityPhone/base/panic.sh");
 
-    exit(0);
+    emit finished();
 }

@@ -81,6 +81,9 @@ public:
 
     void ALARM();
 
+signals:
+    void finished();
+
 public slots:
     void onChangeOrientationChange(int state);
     void onStateChanged(QMediaPlayer::State state);
@@ -92,6 +95,7 @@ private:
     QMediaPlayer* player;
     QMediaPlaylist* playlist;
     QFeedbackHapticsEffect* rumble;
+    PowerButtonListener* listener;
     int password[7];
     int readIndex;
     int requires;

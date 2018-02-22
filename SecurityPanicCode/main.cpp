@@ -56,6 +56,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qDebug() << "$inicialize" << endl;
     panic.init(dynamic_cast<QObject*>(viewer.rootObject()));
 
+    QObject::connect(&panic, SIGNAL(finished()), app.data(), SLOT(quit()));
+
     qDebug() << "$pSplash close" << endl;
     pSplash->close();
     delete pSplash;

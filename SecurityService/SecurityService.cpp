@@ -47,37 +47,44 @@ SecurityService::SecurityService(QObject *parent)
     pass = false;
     alarming = false;
 
+    qDebug() << "loading configuration" << endl;
     loadConfiguration();
+
+    qDebug() << "read current password" << endl;
     readCurrentPassword();
 
+    qDebug() << "initialized orientation sensors" << endl;
     orientation = new Orientation(parent);
     connect(orientation, SIGNAL(orientationChanged(int)), SLOT(onChangeOrientationChange(int)));
 
+    qDebug() << "create playlist" << endl;
     playlist = new QMediaPlaylist();
     playlist->addMedia(QUrl::fromLocalFile("/opt/SecurityPhone/base/alarm.wav"));
     playlist->addMedia(QUrl::fromLocalFile("/opt/SecurityPhone/base/beep.wav"));
     playlist->addMedia(QUrl::fromLocalFile("/opt/SecurityPhone/base/login.wav"));
-
     playlist->setCurrentIndex(0);
     playlist->setPlaybackMode(QMediaPlaylist::CurrentItemOnce);
 
+    qDebug() << "create player" << endl;
     player = new QMediaPlayer;
     player->setPlaylist(playlist);
-
     player->setVolume(100);
 
     if(cAnonym || !cSound) {
         player->setMuted(true);
     }
 
+    qDebug() << "create rumble" << endl;
     rumble = new QFeedbackHapticsEffect();
     rumble->setAttackIntensity(0.0);
     rumble->setAttackTime(100);
     rumble->setFadeTime(100);
     rumble->setFadeIntensity(0.+0);
 
+    qDebug() << "connect player stateChange event" << endl;
     connect(player, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State)));
 
+    qDebug() << "volumeResourceSet policy" << endl;
     volResourceSet = new ResourcePolicy::ResourceSet("player", this);
     volResourceSet->addResourceObject(new ResourcePolicy::ScaleButtonResource);
     volResourceSet->acquire();
@@ -87,7 +94,7 @@ SecurityService::SecurityService(QObject *parent)
     QProcess process;
     process.start("sh /opt/SecurityPhone/base/activation.sh");
 
-    PowerButtonListener* listener = new PowerButtonListener(this);
+    listener = new PowerButtonListener(this);
     //  PowerMenu powerMenu(window);
 
     QObject::connect(listener, SIGNAL(powerButtonDoubleClicked()), this, SLOT(powerBtnDoubleClick()));
@@ -101,11 +108,14 @@ SecurityService::SecurityService(QObject *parent)
 
 SecurityService::~SecurityService()
 {
+    qDebug() << "DTOR : security" << endl;
     delete orientation;
     delete player;
     delete playlist;
     delete volResourceSet;
     delete rumble;
+    delete listener;
+    qDebug() << "DTOR finished" << endl;
 }
 
 void SecurityService::powerBtnDoubleClick()
@@ -133,7 +143,7 @@ void SecurityService::deactivating()
     QProcess process;
     process.start("sh /opt/SecurityPhone/base/deactivation.sh");
 
-    QApplication::exit();
+    emit finished();
 }
 
 void SecurityService::onStateChanged(QMediaPlayer::State state)
@@ -239,7 +249,6 @@ void SecurityService::ALARM()
 
         qDebug() << "ALARM VOLUME TIGGER TIMER STARTING" << endl;
 
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
         QTimer* timer = new QTimer(this);
         timer->setInterval(1000);
         connect(timer, SIGNAL(timeout()), this, SLOT(volumeMaximized()));
@@ -304,7 +313,7 @@ void SecurityService::readCurrentPassword()
         QProcess process;
         process.start("sh /opt/SecurityPhone/base/deactivation.sh");
 
-        QApplication::exit();
+        emit finished();
     }
 }
 
